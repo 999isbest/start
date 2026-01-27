@@ -61,7 +61,7 @@
             z-index: 1;
             pointer-events: none;
             opacity: 0.15;
-            background-image:
+            background-image: 
                 url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='0' y='20' font-family='monospace' font-size='12' fill='%2300f2ff'%3E010101%3C/text%3E%3Ctext x='20' y='40' font-family='monospace' font-size='12' fill='%2300f2ff'%3E101010%3C/text%3E%3Ctext x='40' y='60' font-family='monospace' font-size='12' fill='%2300f2ff'%3E011011%3C/text%3E%3Ctext x='60' y='80' font-family='monospace' font-size='12' fill='%2300f2ff'%3E110110%3C/text%3E%3C/svg%3E");
             background-repeat: repeat;
             background-size: 200px 200px;
@@ -365,7 +365,7 @@
         .top-right { top: 40px; right: 40px; border-left: none; border-bottom: none; } /* 新增 */
         .bottom-left { bottom: 40px; left: 40px; border-right: none; border-top: none; } /* 新增 */
         .bottom-right { bottom: 40px; right: 40px; border-left: none; border-top: none; }
-
+        
         /* 新增：角落微型刻度 */
         .corner::before {
             content: '';
@@ -465,23 +465,23 @@
     <div class="watermark">192.168.1.1 | 2026-01-27</div>
     <div class="scan-lines"></div>
     <div class="digital-rain"></div>
-
+    
     <div class="blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
     </div>
-
+    
     <!-- 新增：数据波动动画 -->
     <div class="data-wave">
         <svg viewBox="0 0 1000 100" preserveAspectRatio="none">
             <path d="M0,60 Q25%,40 50%,60 T100%,60"></path>
         </svg>
     </div>
-
+    
     <!-- 新增：数据扫描效果 -->
     <div class="data-scan" id="dataScan"></div>
-
+    
     <div class="spotlight" id="spotlight"></div>
 
     <div class="glass-overlay">
@@ -490,13 +490,13 @@
         <div class="corner top-right"></div>
         <div class="corner bottom-left"></div>
         <div class="corner bottom-right"></div>
-
+        
         <!-- 新增：案件编号 -->
         <div class="case-number" id="caseNumber">CASE #2026-0127</div>
-
+        
         <!-- 新增：案件状态标签 -->
         <div class="case-status">STATUS: ONGOING</div>
-
+        
         <!-- 新增：终端指令提示符 -->
         <div class="cmd-prompt">> investigate meme_case #2026-0127</div>
 
@@ -526,7 +526,7 @@
             const x = e.clientX;
             const y = e.clientY;
             spotlight.style.clipPath = `circle(120px at ${x}px ${y}px)`;
-
+            
             // 新增：鼠标移动触发数据扫描效果
             dataScan.style.left = '100%';
             setTimeout(() => {
@@ -546,26 +546,23 @@
             setTimeout(() => {
                 document.body.style.opacity = '1';
             }, 300);
-
+            
             // 新增：模拟终端打字效果
             setTimeout(() => {
                 caseNumber.style.opacity = '0.7';
             }, 800);
         });
 
-        // 新增：按钮点击触发档案加载动画
+        // 修改：按钮点击先显示加载动画，再跳转指定网址
         btnStart.addEventListener('click', () => {
             // 显示加载层
             loadingOverlay.style.opacity = '1';
             loadingOverlay.style.pointerEvents = 'all';
-
-            // 模拟加载（3秒后隐藏，可替换为实际跳转逻辑）
+            
+            // 加载动画显示1.5秒后跳转（可调整时长）
             setTimeout(() => {
-                loadingOverlay.style.opacity = '0';
-                loadingOverlay.style.pointerEvents = 'none';
-                // 实际项目中可替换为页面跳转：
-                // window.location.href = '案件详情页面.html';
-            }, 3000);
+                window.location.href = 'https://999isbest.github.io/renwudaoru/';
+            }, 1500);
         });
     </script>
 </body>
