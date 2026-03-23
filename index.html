@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>梗案追踪：玩梗须有界</title>
     <style>
         :root {
@@ -29,6 +29,9 @@
             font-family: var(--font-main);
             /* 新增：侦探十字准星指针 */
             cursor: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='10' y1='0' x2='10' y2='20' stroke='%2300f2ff' stroke-width='1'/%3E%3Cline x1='0' y1='10' x2='20' y2='10' stroke='%2300f2ff' stroke-width='1'/%3E%3Ccircle cx='10' cy='10' r='3' fill='none' stroke='%2300f2ff' stroke-width='1'/%3E%3C/svg%3E"), auto;
+            /* 核心：添加过渡和变换原点，适配旋转 */
+            transform-origin: center center;
+            transition: transform 0.3s ease-in-out;
         }
 
         /* 新增：扫描线效果 - 模拟监控屏幕 */
@@ -419,8 +422,17 @@
             100% { content: ''; }
         }
 
-        /* 响应式适配：同步调整副标题和按钮的移动端样式 */
+        /* 手机端适配（768px以下）- 保留原有逻辑并优化旋转 */
         @media (max-width: 768px) {
+            body, html {
+                transform: rotate(90deg);
+                width: 100vh;
+                height: 100vw;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                margin: -50vw 0 0 -50vh;
+            }
             h1 {
                 letter-spacing: 15px;
             }
@@ -455,6 +467,96 @@
             }
             .watermark {
                 font-size: 4rem;
+            }
+            /* 移动端适配旋转后的元素位置 */
+            .scan-lines, .digital-rain, .background, .blobs, .data-wave, .data-scan, .spotlight, .loading-overlay {
+                width: 100vh;
+                height: 100vw;
+            }
+        }
+
+        /* 平板设备适配（769px - 1024px）- 核心新增 */
+        @media only screen and (min-width: 769px) and (max-width: 1024px) {
+            /* 平板横屏默认适配 */
+            body, html {
+                padding: 0;
+                min-height: 100vh;
+                min-width: 100vw;
+            }
+            
+            /* 平板竖屏时自动旋转为横屏 */
+            @media (orientation: portrait) {
+                body, html {
+                    transform: rotate(90deg);
+                    transform-origin: center center;
+                    width: 100vh;
+                    height: 100vw;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    margin: -50vw 0 0 -50vh;
+                }
+                /* 适配旋转后的全屏元素 */
+                .scan-lines, .digital-rain, .background, .blobs, .data-wave, .data-scan, .spotlight, .loading-overlay, .watermark {
+                    width: 100vh;
+                    height: 100vw;
+                }
+            }
+            
+            /* 平板专属样式优化 */
+            .watermark {
+                font-size: 6rem;
+            }
+            .case-number {
+                top: 30px;
+                left: 30px;
+                font-size: 0.75rem;
+            }
+            .case-status {
+                top: 30px;
+                right: 30px;
+                font-size: 0.7rem;
+                padding: 3px 10px;
+            }
+            .cmd-prompt {
+                bottom: 30px;
+                left: 30px;
+                font-size: 0.75rem;
+            }
+            .corner {
+                width: 25px;
+                height: 25px;
+            }
+            h1 {
+                letter-spacing: 20px;
+                font-size: clamp(2.5rem, 7vw, 4.5rem);
+            }
+            .subtitle {
+                letter-spacing: 10px;
+                font-size: clamp(1rem, 2.5vw, 1.3rem);
+            }
+            .btn-start {
+                padding: 16px 55px;
+                font-size: clamp(1rem, 1.8vw, 1.1rem);
+            }
+        }
+
+        /* 大屏平板/小笔记本适配（1025px - 1200px）- 新增 */
+        @media only screen and (min-width: 1025px) and (max-width: 1200px) {
+            .watermark {
+                font-size: 7rem;
+            }
+            h1 {
+                letter-spacing: 22px;
+                font-size: clamp(2.8rem, 7.5vw, 5rem);
+            }
+            .subtitle {
+                letter-spacing: 11px;
+                font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+            }
+            .btn-start {
+                padding: 17px 60px;
+                font-size: clamp(1.05rem, 1.9vw, 1.15rem);
             }
         }
     </style>
@@ -521,6 +623,26 @@
         const btnStart = document.getElementById('btnStart');
         const loadingOverlay = document.getElementById('loadingOverlay');
 
+        // 检测设备类型（平板/手机/桌面）
+        function detectDeviceType() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
+            const isMobile = /mobile|android|iphone|ipod|blackberry|iemobile|opera mini/.test(userAgent);
+            return { isTablet: isTablet && !isMobile, isMobile };
+        }
+
+        // 监听屏幕方向变化（适配平板旋转）
+        window.addEventListener('orientationchange', function() {
+            const { isTablet } = detectDeviceType();
+            if (isTablet) {
+                // 重新适配布局
+                document.body.style.transition = 'transform 0.3s ease';
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                }, 100);
+            }
+        });
+
         // 保留你指定的鼠标交互逻辑
         window.addEventListener('mousemove', e => {
             const x = e.clientX;
@@ -541,6 +663,19 @@
 
         // 保留你指定的页面加载动画，新增案件编号渐显
         window.addEventListener('load', () => {
+            // 平板初始化适配
+            const { isTablet } = detectDeviceType();
+            if (isTablet && window.innerHeight > window.innerWidth) {
+                document.body.style.transform = 'rotate(90deg)';
+                document.body.style.width = `${window.innerHeight}px`;
+                document.body.style.height = `${window.innerWidth}px`;
+                document.body.style.position = 'fixed';
+                document.body.style.top = '50%';
+                document.body.style.left = '50%';
+                document.body.style.marginTop = `-${window.innerWidth / 2}px`;
+                document.body.style.marginLeft = `-${window.innerHeight / 2}px`;
+            }
+
             document.body.style.opacity = '0';
             document.body.style.transition = 'opacity 1s ease';
             setTimeout(() => {
