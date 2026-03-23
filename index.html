@@ -1,704 +1,589 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>梗案追踪：玩梗须有界</title>
-    <style>
-        :root {
-            --accent-color: #00f2ff; /* 保留你指定的主色 */
-            --secondary-color: #7000ff; /* 保留你指定的辅助色 */
-            --danger-color: #ff3a3a; /* 警示红 */
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --font-main: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; /* 保留你指定的字体 */
-            --glow-shadow: 0 0 15px var(--accent-color), 0 0 30px rgba(0, 242, 255, 0.3); /* 保留你指定的发光效果 */
-            --scan-line: linear-gradient(to bottom, transparent 50%, rgba(0, 242, 255, 0.05) 50%); /* 适配你的主色 */
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>梗案追踪：玩梗须有界</title>
+<style>
+:root {
+--accent-color: #00f2ff; /* 保留你指定的主色 */
+--secondary-color: #7000ff; /* 保留你指定的辅助色 */
+--danger-color: #ff3a3a; /* 警示红 */
+--glass-bg: rgba(255, 255, 255, 0.03);
+--font-main: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; /* 保留你指定的字体 */
+--glow-shadow: 0 0 15px var(--accent-color), 0 0 30px rgba(0, 242, 255, 0.3); /* 保留你指定的发光效果 */
+--scan-line: linear-gradient(to bottom, transparent 50%, rgba(0, 242, 255, 0.05) 50%); /* 适配你的主色 */
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
 
-        body, html {
-            height: 100%;
-            overflow: hidden;
-            background: #020202; /* 保留你指定的背景色 */
-            color: white;
-            font-family: var(--font-main);
-            /* 新增：侦探十字准星指针 */
-            cursor: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='10' y1='0' x2='10' y2='20' stroke='%2300f2ff' stroke-width='1'/%3E%3Cline x1='0' y1='10' x2='20' y2='10' stroke='%2300f2ff' stroke-width='1'/%3E%3Ccircle cx='10' cy='10' r='3' fill='none' stroke='%2300f2ff' stroke-width='1'/%3E%3C/svg%3E"), auto;
-            /* 核心：添加过渡和变换原点，适配旋转 */
-            transform-origin: center center;
-            transition: transform 0.3s ease-in-out;
-        }
+body, html {
+height: 100%;
+overflow: hidden;
+background: #020202; /* 保留你指定的背景色 */
+color: white;
+font-family: var(--font-main);
+/* 新增：侦探十字准星指针 */
+cursor: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='10' y1='0' x2='10' y2='20' stroke='%2300f2ff' stroke-width='1'/%3E%3Cline x1='0' y1='10' x2='20' y2='10' stroke='%2300f2ff' stroke-width='1'/%3E%3Ccircle cx='10' cy='10' r='3' fill='none' stroke='%2300f2ff' stroke-width='1'/%3E%3C/svg%3E"), auto;
+}
 
-        /* 新增：扫描线效果 - 模拟监控屏幕 */
-        .scan-lines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--scan-line);
-            background-size: 100% 4px;
-            z-index: 1;
-            pointer-events: none;
-            animation: scan 0.2s linear infinite;
-            opacity: 0.3;
-        }
+/* 新增：扫描线效果 - 模拟监控屏幕 */
+.scan-lines {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: var(--scan-line);
+background-size: 100% 4px;
+z-index: 1;
+pointer-events: none;
+animation: scan 0.2s linear infinite;
+opacity: 0.3;
+}
 
-        @keyframes scan {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 4px; }
-        }
+@keyframes scan {
+0% { background-position: 0 0; }
+100% { background-position: 0 4px; }
+}
 
-        /* 新增：数字雨暗纹 - 网络侦探氛围 */
-        .digital-rain {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.15;
+/* 新增：数字雨暗纹 - 网络侦探氛围 */
+.digital-rain {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: 1;
+pointer-events: none;
+opacity: 0.15;
+            background-image:
             background-image: 
-                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='0' y='20' font-family='monospace' font-size='12' fill='%2300f2ff'%3E010101%3C/text%3E%3Ctext x='20' y='40' font-family='monospace' font-size='12' fill='%2300f2ff'%3E101010%3C/text%3E%3Ctext x='40' y='60' font-family='monospace' font-size='12' fill='%2300f2ff'%3E011011%3C/text%3E%3Ctext x='60' y='80' font-family='monospace' font-size='12' fill='%2300f2ff'%3E110110%3C/text%3E%3C/svg%3E");
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            animation: drift 20s linear infinite;
-        }
+url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='0' y='20' font-family='monospace' font-size='12' fill='%2300f2ff'%3E010101%3C/text%3E%3Ctext x='20' y='40' font-family='monospace' font-size='12' fill='%2300f2ff'%3E101010%3C/text%3E%3Ctext x='40' y='60' font-family='monospace' font-size='12' fill='%2300f2ff'%3E011011%3C/text%3E%3Ctext x='60' y='80' font-family='monospace' font-size='12' fill='%2300f2ff'%3E110110%3C/text%3E%3C/svg%3E");
+background-repeat: repeat;
+background-size: 200px 200px;
+animation: drift 20s linear infinite;
+}
 
-        @keyframes drift {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(-20px, -10px) rotate(1deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
+@keyframes drift {
+0% { transform: translate(0, 0) rotate(0deg); }
+50% { transform: translate(-20px, -10px) rotate(1deg); }
+100% { transform: translate(0, 0) rotate(0deg); }
+}
 
-        /* 新增：背景水印（IP/时间戳） */
-        .watermark {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 8rem;
-            color: rgba(0, 242, 255, 0.02);
-            font-family: monospace;
-            pointer-events: none;
-            z-index: 1;
-        }
+/* 新增：背景水印（IP/时间戳） */
+.watermark {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+font-size: 8rem;
+color: rgba(0, 242, 255, 0.02);
+font-family: monospace;
+pointer-events: none;
+z-index: 1;
+}
 
-        /* 底层：保留你指定的背景样式 */
-        .background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
-            z-index: 1;
-        }
+/* 底层：保留你指定的背景样式 */
+.background {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
+z-index: 1;
+}
 
-        /* 动态流动色块 - 保留你指定的样式，新增旋转效果 */
-        .blobs {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            filter: blur(80px);
-            opacity: 0.5;
-            z-index: 2;
-        }
-        .blob {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            animation: move 20s infinite alternate ease-in-out;
-        }
-        .blob-1 {
-            background: var(--accent-color);
-            top: 10%;
-            left: 10%;
-            animation-duration: 25s;
-        }
-        .blob-2 {
-            background: var(--secondary-color);
-            top: 50%;
-            left: 70%;
-            animation-duration: 18s;
-            animation-delay: 2s;
-        }
-        .blob-3 {
-            background: rgba(0, 242, 255, 0.6);
-            top: 80%;
-            left: 30%;
-            animation-duration: 22s;
-            animation-delay: 4s;
-        }
-        @keyframes move {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-            25% { transform: translate(50%, 20%) scale(1.1) rotate(90deg); }
-            50% { transform: translate(80%, 70%) scale(0.9) rotate(180deg); }
-            75% { transform: translate(30%, 90%) scale(1.2) rotate(270deg); }
-            100% { transform: translate(120%, 80%) scale(1) rotate(360deg); }
-        }
+/* 动态流动色块 - 保留你指定的样式，新增旋转效果 */
+.blobs {
+position: absolute;
+width: 100%;
+height: 100%;
+filter: blur(80px);
+opacity: 0.5;
+z-index: 2;
+}
+.blob {
+position: absolute;
+width: 400px;
+height: 400px;
+border-radius: 50%;
+animation: move 20s infinite alternate ease-in-out;
+}
+.blob-1 {
+background: var(--accent-color);
+top: 10%;
+left: 10%;
+animation-duration: 25s;
+}
+.blob-2 {
+background: var(--secondary-color);
+top: 50%;
+left: 70%;
+animation-duration: 18s;
+animation-delay: 2s;
+}
+.blob-3 {
+background: rgba(0, 242, 255, 0.6);
+top: 80%;
+left: 30%;
+animation-duration: 22s;
+animation-delay: 4s;
+}
+@keyframes move {
+0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+25% { transform: translate(50%, 20%) scale(1.1) rotate(90deg); }
+50% { transform: translate(80%, 70%) scale(0.9) rotate(180deg); }
+75% { transform: translate(30%, 90%) scale(1.2) rotate(270deg); }
+100% { transform: translate(120%, 80%) scale(1) rotate(360deg); }
+}
 
-        /* 新增：数据波动动画 */
-        .data-wave {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 80px;
-            z-index: 2;
-            pointer-events: none;
-            opacity: 0.3;
-        }
-        .data-wave svg {
-            width: 100%;
-            height: 100%;
-        }
-        .data-wave path {
-            fill: none;
-            stroke: var(--accent-color);
-            stroke-width: 1.5;
-            animation: wave-move 8s infinite ease-in-out;
-        }
-        @keyframes wave-move {
-            0%, 100% { d: path("M0,60 Q25%,40 50%,60 T100%,60"); }
-            25% { d: path("M0,60 Q25%,20 50%,60 T100%,60"); }
-            50% { d: path("M0,60 Q25%,80 50%,60 T100%,60"); }
-            75% { d: path("M0,60 Q25%,40 50%,60 T100%,60"); }
-        }
+/* 新增：数据波动动画 */
+.data-wave {
+position: fixed;
+bottom: 0;
+left: 0;
+width: 100%;
+height: 80px;
+z-index: 2;
+pointer-events: none;
+opacity: 0.3;
+}
+.data-wave svg {
+width: 100%;
+height: 100%;
+}
+.data-wave path {
+fill: none;
+stroke: var(--accent-color);
+stroke-width: 1.5;
+animation: wave-move 8s infinite ease-in-out;
+}
+@keyframes wave-move {
+0%, 100% { d: path("M0,60 Q25%,40 50%,60 T100%,60"); }
+25% { d: path("M0,60 Q25%,20 50%,60 T100%,60"); }
+50% { d: path("M0,60 Q25%,80 50%,60 T100%,60"); }
+75% { d: path("M0,60 Q25%,40 50%,60 T100%,60"); }
+}
 
-        /* 新增：数据扫描效果 */
-        .data-scan {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.1), transparent);
-            z-index: 4;
-            pointer-events: none;
-            transition: left 0.8s ease-out;
-        }
+/* 新增：数据扫描效果 */
+.data-scan {
+position: fixed;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.1), transparent);
+z-index: 4;
+pointer-events: none;
+transition: left 0.8s ease-out;
+}
 
-        /* 追光层：保留你指定的样式 */
-        .spotlight {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--accent-color) 0%, var(--secondary-color) 100%);
-            z-index: 3;
-            clip-path: circle(0px at 0% 0%);
-            transition: clip-path 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-            filter: brightness(1.8) contrast(1.2) blur(3px);
-            opacity: 0.8;
-            mix-blend-mode: overlay; /* 新增：叠加模式更自然 */
-        }
+/* 追光层：保留你指定的样式 */
+.spotlight {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: linear-gradient(135deg, var(--accent-color) 0%, var(--secondary-color) 100%);
+z-index: 3;
+clip-path: circle(0px at 0% 0%);
+transition: clip-path 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+filter: brightness(1.8) contrast(1.2) blur(3px);
+opacity: 0.8;
+mix-blend-mode: overlay; /* 新增：叠加模式更自然 */
+}
 
-        /* 玻璃蒙层：保留你指定的样式，新增细微边框 */
-        .glass-overlay {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(30px) saturate(200%);
-            -webkit-backdrop-filter: blur(30px) saturate(200%);
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+/* 玻璃蒙层：保留你指定的样式，新增细微边框 */
+.glass-overlay {
+position: relative;
+z-index: 10;
+height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+backdrop-filter: blur(30px) saturate(200%);
+-webkit-backdrop-filter: blur(30px) saturate(200%);
+background: rgba(0, 0, 0, 0.5);
+border: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-        /* 新增：案件编号 - 侦探档案元素 */
-        .case-number {
-            position: absolute;
-            top: 40px;
-            left: 40px;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
-            color: var(--accent-color);
-            opacity: 0;
-            text-transform: uppercase;
-            pointer-events: none;
-            transition: opacity 1s ease;
-        }
+/* 新增：案件编号 - 侦探档案元素 */
+.case-number {
+position: absolute;
+top: 40px;
+left: 40px;
+font-size: 0.8rem;
+letter-spacing: 3px;
+color: var(--accent-color);
+opacity: 0;
+text-transform: uppercase;
+pointer-events: none;
+transition: opacity 1s ease;
+}
 
-        /* 新增：终端指令提示符 */
-        .cmd-prompt {
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            font-size: 0.8rem;
-            color: var(--accent-color);
-            opacity: 0.6;
-            font-family: 'Consolas', monospace;
-            pointer-events: none;
-            animation: blink 1.2s infinite;
-        }
-        .cmd-prompt::after {
-            content: '_';
-            margin-left: 5px;
-            animation: blink 1s infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
+/* 新增：终端指令提示符 */
+.cmd-prompt {
+position: absolute;
+bottom: 40px;
+left: 40px;
+font-size: 0.8rem;
+color: var(--accent-color);
+opacity: 0.6;
+font-family: 'Consolas', monospace;
+pointer-events: none;
+animation: blink 1.2s infinite;
+}
+.cmd-prompt::after {
+content: '_';
+margin-left: 5px;
+animation: blink 1s infinite;
+}
+@keyframes blink {
+0%, 100% { opacity: 1; }
+50% { opacity: 0; }
+}
 
-        /* 新增：案件状态标签 */
-        .case-status {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            color: var(--accent-color);
-            background: rgba(0, 242, 255, 0.1);
-            padding: 4px 12px;
-            border: 1px solid rgba(0, 242, 255, 0.3);
-            border-radius: 2px;
-            pointer-events: none;
-            text-transform: uppercase;
-        }
+/* 新增：案件状态标签 */
+.case-status {
+position: absolute;
+top: 40px;
+right: 40px;
+font-size: 0.75rem;
+letter-spacing: 2px;
+color: var(--accent-color);
+background: rgba(0, 242, 255, 0.1);
+padding: 4px 12px;
+border: 1px solid rgba(0, 242, 255, 0.3);
+border-radius: 2px;
+pointer-events: none;
+text-transform: uppercase;
+}
 
-        .content {
-            text-align: center;
-            pointer-events: none;
-            margin-bottom: 80px;
-            position: relative;
-        }
+.content {
+text-align: center;
+pointer-events: none;
+margin-bottom: 80px;
+position: relative;
+}
 
-        /* 标题：完全保留你指定的样式，新增故障效果 */
-        h1 {
-            font-size: clamp(3rem, 8vw, 5.5rem);
-            font-weight: 600;
-            letter-spacing: 25px;
-            margin-bottom: 15px;
-            background: linear-gradient(to bottom, #ffffff 60%, rgba(255,255,255,0.4));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: var(--glow-shadow);
-            position: relative;
-        }
+/* 标题：完全保留你指定的样式，新增故障效果 */
+h1 {
+font-size: clamp(3rem, 8vw, 5.5rem);
+font-weight: 600;
+letter-spacing: 25px;
+margin-bottom: 15px;
+background: linear-gradient(to bottom, #ffffff 60%, rgba(255,255,255,0.4));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+text-shadow: var(--glow-shadow);
+position: relative;
+}
 
-        /* 新增：标题故障效果 - 数字侦探风格 */
-        h1::after {
-            content: '梗案追踪';
-            position: absolute;
-            top: 2px;
-            left: 4px;
-            color: var(--danger-color);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            opacity: 0.3;
-            z-index: -1;
-            text-shadow: none;
-        }
+/* 新增：标题故障效果 - 数字侦探风格 */
+h1::after {
+content: '梗案追踪';
+position: absolute;
+top: 2px;
+left: 4px;
+color: var(--danger-color);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+opacity: 0.3;
+z-index: -1;
+text-shadow: none;
+}
 
-        /* 副标题：加大字号（从原来的 0.8rem/2vw/0.9rem 调整为 1.2rem/3vw/1.5rem） */
-        .subtitle {
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
-            font-weight: 500;
-            letter-spacing: 12px;
-            color: rgba(255,255,255,0.7);
-            text-indent: 12px;
-            text-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
-            margin-bottom: 30px; /* 增加间距，适配更大字号 */
-        }
+/* 副标题：加大字号（从原来的 0.8rem/2vw/0.9rem 调整为 1.2rem/3vw/1.5rem） */
+.subtitle {
+font-size: clamp(1.2rem, 3vw, 1.5rem);
+font-weight: 500;
+letter-spacing: 12px;
+color: rgba(255,255,255,0.7);
+text-indent: 12px;
+text-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+margin-bottom: 30px; /* 增加间距，适配更大字号 */
+}
 
-        /* 按钮：加大字号（从原来的 0.8rem/1.5vw/0.85rem 调整为 1.1rem/2vw/1.2rem） */
-        .btn-start {
-            pointer-events: all;
-            padding: 18px 65px; /* 同步加大内边距，适配更大字号 */
-            font-size: clamp(1.1rem, 2vw, 1.2rem);
-            font-weight: 500;
-            letter-spacing: 5px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            color: white;
-            cursor: pointer; /* 恢复按钮默认指针 */
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            text-indent: 5px;
-            border-radius: 2px;
-        }
+/* 按钮：加大字号（从原来的 0.8rem/1.5vw/0.85rem 调整为 1.1rem/2vw/1.2rem） */
+.btn-start {
+pointer-events: all;
+padding: 18px 65px; /* 同步加大内边距，适配更大字号 */
+font-size: clamp(1.1rem, 2vw, 1.2rem);
+font-weight: 500;
+letter-spacing: 5px;
+background: rgba(0, 0, 0, 0.2);
+border: 1px solid rgba(255, 255, 255, 0.4);
+color: white;
+cursor: pointer; /* 恢复按钮默认指针 */
+transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+position: relative;
+overflow: hidden;
+text-indent: 5px;
+border-radius: 2px;
+}
 
-        .btn-start::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
-            transition: 0.6s;
-        }
+.btn-start::before {
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
+transition: 0.6s;
+}
 
-        .btn-start:hover {
-            border-color: var(--accent-color);
-            background: rgba(0, 242, 255, 0.15);
-            box-shadow: var(--glow-shadow);
-            letter-spacing: 8px;
-            transform: translateY(-2px);
-        }
+.btn-start:hover {
+border-color: var(--accent-color);
+background: rgba(0, 242, 255, 0.15);
+box-shadow: var(--glow-shadow);
+letter-spacing: 8px;
+transform: translateY(-2px);
+}
 
-        .btn-start:hover::before {
-            left: 100%;
-        }
+.btn-start:hover::before {
+left: 100%;
+}
 
-        /* 装饰性边框：保留你指定的样式，新增另外两个角落 + 微型刻度 */
-        .corner {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border: 1px solid rgba(255,255,255,0.3);
-            pointer-events: none;
-            transition: border-color 0.3s;
-        }
-        .top-left { top: 40px; left: 40px; border-right: none; border-bottom: none; }
-        .top-right { top: 40px; right: 40px; border-left: none; border-bottom: none; } /* 新增 */
-        .bottom-left { bottom: 40px; left: 40px; border-right: none; border-top: none; } /* 新增 */
-        .bottom-right { bottom: 40px; right: 40px; border-left: none; border-top: none; }
+/* 装饰性边框：保留你指定的样式，新增另外两个角落 + 微型刻度 */
+.corner {
+position: absolute;
+width: 30px;
+height: 30px;
+border: 1px solid rgba(255,255,255,0.3);
+pointer-events: none;
+transition: border-color 0.3s;
+}
+.top-left { top: 40px; left: 40px; border-right: none; border-bottom: none; }
+.top-right { top: 40px; right: 40px; border-left: none; border-bottom: none; } /* 新增 */
+.bottom-left { bottom: 40px; left: 40px; border-right: none; border-top: none; } /* 新增 */
+.bottom-right { bottom: 40px; right: 40px; border-left: none; border-top: none; }
+
         
-        /* 新增：角落微型刻度 */
-        .corner::before {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 1px;
-            background: var(--accent-color);
-            opacity: 0.5;
-        }
-        .top-left::before { bottom: 0; right: -8px; }
-        .top-right::before { bottom: 0; left: -8px; }
-        .bottom-left::before { top: 0; right: -8px; }
-        .bottom-right::before { top: 0; left: -8px; }
+/* 新增：角落微型刻度 */
+.corner::before {
+content: '';
+position: absolute;
+width: 8px;
+height: 1px;
+background: var(--accent-color);
+opacity: 0.5;
+}
+.top-left::before { bottom: 0; right: -8px; }
+.top-right::before { bottom: 0; left: -8px; }
+.bottom-left::before { top: 0; right: -8px; }
+.bottom-right::before { top: 0; left: -8px; }
 
-        /* 鼠标移动时边框变色：保留你指定的样式 */
-        .glass-overlay:hover .corner {
-            border-color: var(--accent-color);
-        }
+/* 鼠标移动时边框变色：保留你指定的样式 */
+.glass-overlay:hover .corner {
+border-color: var(--accent-color);
+}
 
-        /* 新增：档案加载动画层 */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #020202;
-            z-index: 999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-        .loading-text {
-            font-size: 1rem;
-            color: var(--accent-color);
-            font-family: monospace;
-            letter-spacing: 3px;
-        }
-        .loading-text::after {
-            content: '';
-            animation: loading-dots 1.5s infinite;
-        }
-        @keyframes loading-dots {
-            0% { content: ''; }
-            25% { content: '.'; }
-            50% { content: '..'; }
-            75% { content: '...'; }
-            100% { content: ''; }
-        }
+/* 新增：档案加载动画层 */
+.loading-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: #020202;
+z-index: 999;
+display: flex;
+justify-content: center;
+align-items: center;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.5s ease;
+}
+.loading-text {
+font-size: 1rem;
+color: var(--accent-color);
+font-family: monospace;
+letter-spacing: 3px;
+}
+.loading-text::after {
+content: '';
+animation: loading-dots 1.5s infinite;
+}
+@keyframes loading-dots {
+0% { content: ''; }
+25% { content: '.'; }
+50% { content: '..'; }
+75% { content: '...'; }
+100% { content: ''; }
+}
 
-        /* 手机端适配（768px以下）- 保留原有逻辑并优化旋转 */
-        @media (max-width: 768px) {
-            body, html {
-                transform: rotate(90deg);
-                width: 100vh;
-                height: 100vw;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                margin: -50vw 0 0 -50vh;
-            }
-            h1 {
-                letter-spacing: 15px;
-            }
-            .subtitle {
-                letter-spacing: 8px;
-                text-indent: 8px;
-                font-size: clamp(1rem, 2.5vw, 1.2rem); /* 移动端适配加大后的字号 */
-            }
-            .corner {
-                width: 20px;
-                height: 20px;
-            }
-            .btn-start {
-                padding: 15px 50px; /* 移动端适配加大后的内边距 */
-                font-size: clamp(0.9rem, 1.8vw, 1rem); /* 移动端适配加大后的字号 */
-            }
-            .case-number {
-                font-size: 0.7rem;
-                top: 20px;
-                left: 20px;
-            }
-            .cmd-prompt {
-                font-size: 0.7rem;
-                bottom: 20px;
-                left: 20px;
-            }
-            .case-status {
-                font-size: 0.65rem;
-                top: 20px;
-                right: 20px;
-                padding: 3px 8px;
-            }
-            .watermark {
-                font-size: 4rem;
-            }
-            /* 移动端适配旋转后的元素位置 */
-            .scan-lines, .digital-rain, .background, .blobs, .data-wave, .data-scan, .spotlight, .loading-overlay {
-                width: 100vh;
-                height: 100vw;
-            }
-        }
-
-        /* 平板设备适配（769px - 1024px）- 核心新增 */
-        @media only screen and (min-width: 769px) and (max-width: 1024px) {
-            /* 平板横屏默认适配 */
-            body, html {
-                padding: 0;
-                min-height: 100vh;
-                min-width: 100vw;
-            }
-            
-            /* 平板竖屏时自动旋转为横屏 */
-            @media (orientation: portrait) {
-                body, html {
-                    transform: rotate(90deg);
-                    transform-origin: center center;
-                    width: 100vh;
-                    height: 100vw;
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    margin: -50vw 0 0 -50vh;
-                }
-                /* 适配旋转后的全屏元素 */
-                .scan-lines, .digital-rain, .background, .blobs, .data-wave, .data-scan, .spotlight, .loading-overlay, .watermark {
-                    width: 100vh;
-                    height: 100vw;
-                }
-            }
-            
-            /* 平板专属样式优化 */
-            .watermark {
-                font-size: 6rem;
-            }
-            .case-number {
-                top: 30px;
-                left: 30px;
-                font-size: 0.75rem;
-            }
-            .case-status {
-                top: 30px;
-                right: 30px;
-                font-size: 0.7rem;
-                padding: 3px 10px;
-            }
-            .cmd-prompt {
-                bottom: 30px;
-                left: 30px;
-                font-size: 0.75rem;
-            }
-            .corner {
-                width: 25px;
-                height: 25px;
-            }
-            h1 {
-                letter-spacing: 20px;
-                font-size: clamp(2.5rem, 7vw, 4.5rem);
-            }
-            .subtitle {
-                letter-spacing: 10px;
-                font-size: clamp(1rem, 2.5vw, 1.3rem);
-            }
-            .btn-start {
-                padding: 16px 55px;
-                font-size: clamp(1rem, 1.8vw, 1.1rem);
-            }
-        }
-
-        /* 大屏平板/小笔记本适配（1025px - 1200px）- 新增 */
-        @media only screen and (min-width: 1025px) and (max-width: 1200px) {
-            .watermark {
-                font-size: 7rem;
-            }
-            h1 {
-                letter-spacing: 22px;
-                font-size: clamp(2.8rem, 7.5vw, 5rem);
-            }
-            .subtitle {
-                letter-spacing: 11px;
-                font-size: clamp(1.1rem, 2.8vw, 1.4rem);
-            }
-            .btn-start {
-                padding: 17px 60px;
-                font-size: clamp(1.05rem, 1.9vw, 1.15rem);
-            }
-        }
-    </style>
+/* 响应式适配：同步调整副标题和按钮的移动端样式 */
+@media (max-width: 768px) {
+h1 {
+letter-spacing: 15px;
+}
+.subtitle {
+letter-spacing: 8px;
+text-indent: 8px;
+font-size: clamp(1rem, 2.5vw, 1.2rem); /* 移动端适配加大后的字号 */
+}
+.corner {
+width: 20px;
+height: 20px;
+}
+.btn-start {
+padding: 15px 50px; /* 移动端适配加大后的内边距 */
+font-size: clamp(0.9rem, 1.8vw, 1rem); /* 移动端适配加大后的字号 */
+}
+.case-number {
+font-size: 0.7rem;
+top: 20px;
+left: 20px;
+}
+.cmd-prompt {
+font-size: 0.7rem;
+bottom: 20px;
+left: 20px;
+}
+.case-status {
+font-size: 0.65rem;
+top: 20px;
+right: 20px;
+padding: 3px 8px;
+}
+.watermark {
+font-size: 4rem;
+}
+}
+</style>
 </head>
 <body>
-    <div class="background"></div>
-    <!-- 新增：背景水印 -->
-    <div class="watermark">192.168.1.1 | 2026-01-27</div>
-    <div class="scan-lines"></div>
-    <div class="digital-rain"></div>
-    
-    <div class="blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
-    
-    <!-- 新增：数据波动动画 -->
-    <div class="data-wave">
-        <svg viewBox="0 0 1000 100" preserveAspectRatio="none">
-            <path d="M0,60 Q25%,40 50%,60 T100%,60"></path>
-        </svg>
-    </div>
-    
-    <!-- 新增：数据扫描效果 -->
-    <div class="data-scan" id="dataScan"></div>
-    
-    <div class="spotlight" id="spotlight"></div>
+<div class="background"></div>
+<!-- 新增：背景水印 -->
+<div class="watermark">192.168.1.1 | 2026-01-27</div>
+<div class="scan-lines"></div>
+<div class="digital-rain"></div>
 
-    <div class="glass-overlay">
-        <!-- 装饰边框：保留原有两个，新增另外两个 -->
-        <div class="corner top-left"></div>
-        <div class="corner top-right"></div>
-        <div class="corner bottom-left"></div>
-        <div class="corner bottom-right"></div>
+    
+<div class="blobs">
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+</div>
+
+    
+<!-- 新增：数据波动动画 -->
+<div class="data-wave">
+<svg viewBox="0 0 1000 100" preserveAspectRatio="none">
+<path d="M0,60 Q25%,40 50%,60 T100%,60"></path>
+</svg>
+</div>
+
+    
+<!-- 新增：数据扫描效果 -->
+<div class="data-scan" id="dataScan"></div>
+
+    
+<div class="spotlight" id="spotlight"></div>
+
+<div class="glass-overlay">
+<!-- 装饰边框：保留原有两个，新增另外两个 -->
+<div class="corner top-left"></div>
+<div class="corner top-right"></div>
+<div class="corner bottom-left"></div>
+<div class="corner bottom-right"></div>
+
         
-        <!-- 新增：案件编号 -->
-        <div class="case-number" id="caseNumber">CASE #2026-0127</div>
+<!-- 新增：案件编号 -->
+<div class="case-number" id="caseNumber">CASE #2026-0127</div>
+
         
-        <!-- 新增：案件状态标签 -->
-        <div class="case-status">STATUS: ONGOING</div>
+<!-- 新增：案件状态标签 -->
+<div class="case-status">STATUS: ONGOING</div>
+
         
-        <!-- 新增：终端指令提示符 -->
-        <div class="cmd-prompt">> investigate meme_case #2026-0127</div>
+<!-- 新增：终端指令提示符 -->
+<div class="cmd-prompt">> investigate meme_case #2026-0127</div>
 
-        <div class="content">
-            <h1>梗案追踪</h1>
-            <p class="subtitle">玩 梗 须 有 界</p>
-            <!-- 已删除：<p class="warning">⚠️ 网络言论边界调查</p> -->
-        </div>
+<div class="content">
+<h1>梗案追踪</h1>
+<p class="subtitle">玩 梗 须 有 界</p>
+<!-- 已删除：<p class="warning">⚠️ 网络言论边界调查</p> -->
+</div>
 
-        <button class="btn-start" id="btnStart">开始阅读</button> <!-- 保留你指定的按钮文字 -->
-    </div>
+<button class="btn-start" id="btnStart">开始阅读</button> <!-- 保留你指定的按钮文字 -->
+</div>
 
-    <!-- 新增：档案加载动画层 -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-text">LOADING CASE FILE</div>
-    </div>
+<!-- 新增：档案加载动画层 -->
+<div class="loading-overlay" id="loadingOverlay">
+<div class="loading-text">LOADING CASE FILE</div>
+</div>
 
-    <script>
-        const spotlight = document.getElementById('spotlight');
-        const caseNumber = document.getElementById('caseNumber');
-        const dataScan = document.getElementById('dataScan');
-        const btnStart = document.getElementById('btnStart');
-        const loadingOverlay = document.getElementById('loadingOverlay');
+<script>
+const spotlight = document.getElementById('spotlight');
+const caseNumber = document.getElementById('caseNumber');
+const dataScan = document.getElementById('dataScan');
+const btnStart = document.getElementById('btnStart');
+const loadingOverlay = document.getElementById('loadingOverlay');
 
-        // 检测设备类型（平板/手机/桌面）
-        function detectDeviceType() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
-            const isMobile = /mobile|android|iphone|ipod|blackberry|iemobile|opera mini/.test(userAgent);
-            return { isTablet: isTablet && !isMobile, isMobile };
-        }
+// 保留你指定的鼠标交互逻辑
+window.addEventListener('mousemove', e => {
+const x = e.clientX;
+const y = e.clientY;
+spotlight.style.clipPath = `circle(120px at ${x}px ${y}px)`;
 
-        // 监听屏幕方向变化（适配平板旋转）
-        window.addEventListener('orientationchange', function() {
-            const { isTablet } = detectDeviceType();
-            if (isTablet) {
-                // 重新适配布局
-                document.body.style.transition = 'transform 0.3s ease';
-                setTimeout(() => {
-                    window.scrollTo(0, 0);
-                }, 100);
-            }
-        });
-
-        // 保留你指定的鼠标交互逻辑
-        window.addEventListener('mousemove', e => {
-            const x = e.clientX;
-            const y = e.clientY;
-            spotlight.style.clipPath = `circle(120px at ${x}px ${y}px)`;
             
-            // 新增：鼠标移动触发数据扫描效果
-            dataScan.style.left = '100%';
-            setTimeout(() => {
-                dataScan.style.left = '-100%';
-            }, 800);
-        });
+// 新增：鼠标移动触发数据扫描效果
+dataScan.style.left = '100%';
+setTimeout(() => {
+dataScan.style.left = '-100%';
+}, 800);
+});
 
-        // 保留你指定的鼠标移出逻辑
-        document.addEventListener('mouseleave', () => {
-            spotlight.style.clipPath = `circle(0px at 50% 50%)`;
-        });
+// 保留你指定的鼠标移出逻辑
+document.addEventListener('mouseleave', () => {
+spotlight.style.clipPath = `circle(0px at 50% 50%)`;
+});
 
-        // 保留你指定的页面加载动画，新增案件编号渐显
-        window.addEventListener('load', () => {
-            // 平板初始化适配
-            const { isTablet } = detectDeviceType();
-            if (isTablet && window.innerHeight > window.innerWidth) {
-                document.body.style.transform = 'rotate(90deg)';
-                document.body.style.width = `${window.innerHeight}px`;
-                document.body.style.height = `${window.innerWidth}px`;
-                document.body.style.position = 'fixed';
-                document.body.style.top = '50%';
-                document.body.style.left = '50%';
-                document.body.style.marginTop = `-${window.innerWidth / 2}px`;
-                document.body.style.marginLeft = `-${window.innerHeight / 2}px`;
-            }
+// 保留你指定的页面加载动画，新增案件编号渐显
+window.addEventListener('load', () => {
+document.body.style.opacity = '0';
+document.body.style.transition = 'opacity 1s ease';
+setTimeout(() => {
+document.body.style.opacity = '1';
+}, 300);
 
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 1s ease';
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 300);
             
-            // 新增：模拟终端打字效果
-            setTimeout(() => {
-                caseNumber.style.opacity = '0.7';
-            }, 800);
-        });
+// 新增：模拟终端打字效果
+setTimeout(() => {
+caseNumber.style.opacity = '0.7';
+}, 800);
+});
 
+        // 新增：按钮点击触发档案加载动画
         // 修改：按钮点击先显示加载动画，再跳转指定网址
-        btnStart.addEventListener('click', () => {
-            // 显示加载层
-            loadingOverlay.style.opacity = '1';
-            loadingOverlay.style.pointerEvents = 'all';
+btnStart.addEventListener('click', () => {
+// 显示加载层
+loadingOverlay.style.opacity = '1';
+loadingOverlay.style.pointerEvents = 'all';
+
+            // 模拟加载（3秒后隐藏，可替换为实际跳转逻辑）
             
             // 加载动画显示1.5秒后跳转（可调整时长）
-            setTimeout(() => {
+setTimeout(() => {
+                loadingOverlay.style.opacity = '0';
+                loadingOverlay.style.pointerEvents = 'none';
+                // 实际项目中可替换为页面跳转：
+                // window.location.href = '案件详情页面.html';
+            }, 3000);
                 window.location.href = 'https://999isbest.github.io/renwudaoru/';
             }, 1500);
-        });
-    </script>
+});
+</script>
 </body>
+</html>
 </html>
